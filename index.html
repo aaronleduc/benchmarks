@@ -114,6 +114,47 @@
   .wt-log-btn:hover { filter: brightness(1.08); }
   .wt-log-btn.saved { background: var(--good-soft); color: var(--good); border: 1px solid rgba(74, 222, 128, 0.35); }
 
+  .wt-video-link { background: none; }
+
+  .wt-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    padding: 24px;
+  }
+  .wt-modal {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .wt-modal-gif {
+    max-width: 100%;
+    max-height: 60vh;
+    border-radius: 8px;
+    display: block;
+  }
+  .wt-modal-close {
+    background: var(--accent);
+    color: #1a0f0b;
+    border: none;
+    border-radius: 7px;
+    padding: 8px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
   @media (max-width: 380px) {
     .wt-title { font-size: 22px; }
   }
@@ -142,7 +183,7 @@ const PLAN = {
     warmup: 'Bike 3 min easy · 90/90 hip stretch ×60s each side · thoracic rotations ×10 each side · glute bridges ×15',
     finisher: 'Row machine — 40 sec hard / 20 sec easy × 8 rounds',
     exercises: [
-      { id: 'd1-1', name: 'Deadlift', scheme: '3 × 8–10', rest: '90 sec rest', video: 'https://exrx.net/WeightExercises/GluteusMaximus/BBDeadlift' },
+      { id: 'd1-1', name: 'Deadlift', scheme: '3 × 8–10', rest: '90 sec rest', video: 'https://exrx.net/WeightExercises/GluteusMaximus/BBDeadlift', gif: 'https://exrx.net/application/files/4714/3885/0262/BBDeadlift.gif' },
       { id: 'd1-2', name: 'Barbell Squat', scheme: '3 × 12–15', rest: '75 sec rest', video: 'https://exrx.net/WeightExercises/Quadriceps/BBSquat' },
       { id: 'd1-3', name: 'Incline Dumbbell Press', scheme: '3 × 12–15', rest: '75 sec rest', video: 'https://exrx.net/WeightExercises/PectoralClavicular/DBInclineBenchPress' },
       { id: 'd1-4', name: 'Cable Rotation', scheme: '3 × 12 each side', rest: '60 sec rest', video: 'https://exrx.net/WeightExercises/Obliques/CBUpDownTwist' },
@@ -221,6 +262,7 @@ function App() {
   const [apiReady, setApiReady] = useState(false);
   const [gisReady, setGisReady] = useState(false);
   const [lastWeights, setLastWeights] = useState({});
+  const [modalGif, setModalGif] = useState(null);
   const [status, setStatus] = useState(null);
   const tokenClientRef = useRef(null);
 
@@ -437,13 +479,17 @@ function App() {
                 )}
                 {ex.note && <div className="wt-exercise-note">{ex.note}</div>}
               </div>
-              <a
-                className="wt-video-link"
-                href={ex.video || `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Form video"
-              >▶</a>
+              {ex.gif ? (
+                <button className="wt-video-link" onClick={() => setModalGif(ex.gif)} title="Form demo">▶</button>
+              ) : (
+                <a
+                  className="wt-video-link"
+                  href={ex.video || `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title="Form video"
+                >▶</a>
+              )}
             </div>
             <div className="wt-field-grid">
               <div className="wt-field">
@@ -475,6 +521,15 @@ function App() {
       <Collapsible title="Finisher (8 min)" open={false}>
         <BulletList text={plan.finisher} />
       </Collapsible>
+
+      {modalGif && (
+        <div className="wt-modal-overlay" onClick={() => setModalGif(null)}>
+          <div className="wt-modal" onClick={(e) => e.stopPropagation()}>
+            <img src={modalGif} alt="Exercise form demo" className="wt-modal-gif" />
+            <button className="wt-modal-close" onClick={() => setModalGif(null)}>Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
