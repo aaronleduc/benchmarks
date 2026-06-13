@@ -119,40 +119,82 @@
   .wt-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     z-index: 50;
-    padding: 24px;
+    padding: 0;
   }
   .wt-modal {
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
-    max-width: 100%;
+    border-radius: 16px 16px 0 0;
+    padding: 16px;
+    width: 100%;
+    max-width: 480px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 12px;
+    max-height: 90vh;
+    overflow-y: auto;
   }
-  .wt-modal-gif {
-    max-width: 100%;
-    max-height: 60vh;
+  .wt-modal-title {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.04em;
+    align-self: flex-start;
+  }
+  .wt-video-toggle {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .wt-toggle-btn {
+    flex: 1;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    padding: 7px;
+    cursor: pointer;
+  }
+  .wt-toggle-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .wt-modal-video {
+    width: 100%;
     border-radius: 8px;
     display: block;
+    background: #000;
   }
+  .wt-modal-notes {
+    margin: 0;
+    padding-left: 18px;
+    width: 100%;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+  }
+  .wt-modal-notes li { margin-bottom: 6px; }
   .wt-modal-close {
     background: var(--accent);
     color: #1a0f0b;
     border: none;
     border-radius: 7px;
-    padding: 8px 20px;
+    padding: 10px 24px;
     font-family: 'Inter', sans-serif;
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
+    width: 100%;
   }
 
   @media (max-width: 380px) {
@@ -183,7 +225,7 @@ const PLAN = {
     warmup: 'Bike 3 min easy · 90/90 hip stretch ×60s each side · thoracic rotations ×10 each side · glute bridges ×15',
     finisher: 'Row machine — 40 sec hard / 20 sec easy × 8 rounds',
     exercises: [
-      { id: 'd1-1', name: 'Deadlift', scheme: '3 × 8–10', rest: '90 sec rest', video: 'https://exrx.net/WeightExercises/GluteusMaximus/BBDeadlift', gif: 'https://exrx.net/application/files/4714/3885/0262/BBDeadlift.gif' },
+      { id: 'd1-1', name: 'Deadlift', scheme: '3 × 8–10', rest: '90 sec rest', videos: ['videos/deadlift-front.mp4', 'videos/deadlift-side.mp4'], notes: ['Stand with your mid-foot under the bar and grip the bar with your hands, about a shoulder width apart.', 'Bend your knees, then lift the bar by straightening your back. It is important to keep your back straight.', 'Stand to your full height and hold.', 'Lower the bar to the floor by bending your knees and keeping your back straight.'] },
       { id: 'd1-2', name: 'Barbell Squat', scheme: '3 × 12–15', rest: '75 sec rest', video: 'https://exrx.net/WeightExercises/Quadriceps/BBSquat' },
       { id: 'd1-3', name: 'Incline Dumbbell Press', scheme: '3 × 12–15', rest: '75 sec rest', video: 'https://exrx.net/WeightExercises/PectoralClavicular/DBInclineBenchPress' },
       { id: 'd1-4', name: 'Cable Rotation', scheme: '3 × 12 each side', rest: '60 sec rest', video: 'https://exrx.net/WeightExercises/Obliques/CBUpDownTwist' },
@@ -227,6 +269,37 @@ function todayISO() {
   const d = new Date();
   const off = d.getTimezoneOffset();
   return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
+}
+
+function VideoModal({ videos, notes }) {
+  const [active, setActive] = useState(0);
+  return (
+    <div style={{ width: '100%' }}>
+      <div className="wt-video-toggle">
+        {['Front', 'Side'].map((label, i) => (
+          <button
+            key={i}
+            className={`wt-toggle-btn ${active === i ? 'active' : ''}`}
+            onClick={() => setActive(i)}
+          >{label}</button>
+        ))}
+      </div>
+      <video
+        key={videos[active]}
+        src={videos[active]}
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="wt-modal-video"
+      />
+      {notes && notes.length > 0 && (
+        <ul className="wt-modal-notes">
+          {notes.map((n, i) => <li key={i}>{n}</li>)}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 function BulletList({ text }) {
@@ -479,16 +552,12 @@ function App() {
                 )}
                 {ex.note && <div className="wt-exercise-note">{ex.note}</div>}
               </div>
-              {ex.gif ? (
-                <button className="wt-video-link" onClick={() => setModalGif(ex.gif)} title="Form demo">▶</button>
+              {ex.videos ? (
+                <button className="wt-video-link" onClick={() => setModalGif({ videos: ex.videos, notes: ex.notes, name: ex.name })} title="Form demo">▶</button>
+              ) : ex.video ? (
+                <a className="wt-video-link" href={ex.video} target="_blank" rel="noopener noreferrer" title="Form video">▶</a>
               ) : (
-                <a
-                  className="wt-video-link"
-                  href={ex.video || `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Form video"
-                >▶</a>
+                <a className="wt-video-link" href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}`} target="_blank" rel="noopener noreferrer" title="Form video">▶</a>
               )}
             </div>
             <div className="wt-field-grid">
@@ -525,7 +594,8 @@ function App() {
       {modalGif && (
         <div className="wt-modal-overlay" onClick={() => setModalGif(null)}>
           <div className="wt-modal" onClick={(e) => e.stopPropagation()}>
-            <img src={modalGif} alt="Exercise form demo" className="wt-modal-gif" />
+            <div className="wt-modal-title">{modalGif.name}</div>
+            <VideoModal videos={modalGif.videos} notes={modalGif.notes} />
             <button className="wt-modal-close" onClick={() => setModalGif(null)}>Close</button>
           </div>
         </div>
