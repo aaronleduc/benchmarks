@@ -77,6 +77,23 @@
   .wt-collapsible-chevron { color: var(--muted); font-size: 14px; transition: transform 0.2s; display: inline-block; }
   .wt-collapsible-chevron.open { transform: rotate(180deg); }
   .wt-collapsible-body { padding: 0 14px 13px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+  .wt-bullets { margin: 0; padding-left: 18px; }
+  .wt-bullets li { margin-bottom: 4px; }
+  .wt-bullets li:last-child { margin-bottom: 0; }
+
+  .wt-exercise-last { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
+  .wt-video-link {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 12px;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .wt-video-link:hover { border-color: var(--accent); color: var(--accent); }
 
   .wt-exercise { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 10px; transition: border-color 0.2s; }
   .wt-exercise.saved { border-color: rgba(74, 222, 128, 0.35); }
@@ -171,6 +188,15 @@ function todayISO() {
   return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
 }
 
+function BulletList({ text }) {
+  const items = text.split('·').map((s) => s.trim()).filter(Boolean);
+  return (
+    <ul className="wt-bullets">
+      {items.map((item, i) => <li key={i}>{item}</li>)}
+    </ul>
+  );
+}
+
 function Collapsible({ title, children, open, onToggle }) {
   const [localOpen, setLocalOpen] = useState(false);
   const isOpen = onToggle ? open : localOpen;
@@ -193,6 +219,8 @@ function App() {
   const [warmupOpen, setWarmupOpen] = useState(false);
   const [signedIn, setSignedIn] = useState(false);
   const [apiReady, setApiReady] = useState(false);
+  const [gisReady, setGisReady] = useState(false);
+  const [lastWeights, setLastWeights] = useState({});
   const [status, setStatus] = useState(null);
   const tokenClientRef = useRef(null);
 
@@ -239,6 +267,7 @@ function App() {
           }
         },
       });
+      setGisReady(true);
     };
     gisScript.onerror = () => {
       if (!cancelled) setStatus({ type: 'error', text: 'Failed to load Google sign-in script.' });
@@ -255,6 +284,50 @@ function App() {
       setStatus({ type: 'error', text: 'Still loading — try again in a moment.' });
     }
   };
+
+  // Try a silent reconnect once Google Identity Services is ready.
+  // If you previously granted access and your Google session is still
+  // active, this can refresh the token without showing a popup.
+  useEffect(() => {
+    if (gisReady && tokenClientRef.current) {
+      tokenClientRef.current.requestAccessToken({ prompt: '' });
+    }
+  }, [gisReady]);
+
+  // Proactively refresh the token before it expires (~1 hour).
+  useEffect(() => {
+    if (!signedIn) return;
+    const interval = setInterval(() => {
+      if (tokenClientRef.current) {
+        tokenClientRef.current.requestAccessToken({ prompt: '' });
+      }
+    }, 45 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [signedIn]);
+
+  // Once connected, pull the sheet and find the most recent weight logged per exercise.
+  useEffect(() => {
+    if (!signedIn) return;
+    (async () => {
+      try {
+        const res = await window.gapi.client.sheets.spreadsheets.values.get({
+          spreadsheetId: SPREADSHEET_ID,
+          range: SHEET_RANGE,
+        });
+        const rows = (res.result.values || []).slice(1); // skip header
+        const map = {};
+        rows.forEach((row) => {
+          const [rowDate, , exName, , , weight] = row;
+          if (exName && weight) {
+            map[exName] = { weight, date: rowDate };
+          }
+        });
+        setLastWeights(map);
+      } catch (e) {
+        // non-critical, fail quietly
+      }
+    })();
+  }, [signedIn]);
 
   const updateField = (id, field, value) => {
     setLogs((prev) => ({
@@ -288,6 +361,9 @@ function App() {
         resource: { values: [row] },
       });
       setLogs((prev) => ({ ...prev, [ex.id]: { ...prev[ex.id], saved: true } }));
+      if (entry.weight) {
+        setLastWeights((prev) => ({ ...prev, [ex.name]: { weight: entry.weight, date } }));
+      }
       setStatus({ type: 'success', text: `${ex.name} logged.` });
     } catch (e) {
       const reason = e && e.result && e.result.error ? e.result.error.message : 'Unknown error';
@@ -345,7 +421,7 @@ function App() {
       </div>
 
       <Collapsible title="Warm-up (7 min)" open={warmupOpen} onToggle={() => setWarmupOpen(!warmupOpen)}>
-        {plan.warmup}
+        <BulletList text={plan.warmup} />
       </Collapsible>
 
       {plan.exercises.map((ex) => {
@@ -356,8 +432,18 @@ function App() {
               <div>
                 <div className="wt-exercise-name">{ex.name}</div>
                 <div className="wt-exercise-meta">{ex.scheme} · {ex.rest}</div>
+                {lastWeights[ex.name] && (
+                  <div className="wt-exercise-last">Last: {lastWeights[ex.name].weight} lbs ({lastWeights[ex.name].date})</div>
+                )}
                 {ex.note && <div className="wt-exercise-note">{ex.note}</div>}
               </div>
+              <a
+                className="wt-video-link"
+                href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Form video"
+              >▶</a>
             </div>
             <div className="wt-field-grid">
               <div className="wt-field">
@@ -376,7 +462,7 @@ function App() {
             <div className="wt-notes-row">
               <div className="wt-field">
                 <label>Notes</label>
-                <input type="text" placeholder="e.g. missed last rep, knee felt fine" value={entry.notes || ''} onChange={(e) => updateField(ex.id, 'notes', e.target.value)} />
+                <input type="text" placeholder="" value={entry.notes || ''} onChange={(e) => updateField(ex.id, 'notes', e.target.value)} />
               </div>
               <button className={`wt-log-btn ${entry.saved ? 'saved' : ''}`} onClick={() => logExercise(ex)}>
                 {entry.saved ? '✓ Logged' : 'Log'}
@@ -387,7 +473,7 @@ function App() {
       })}
 
       <Collapsible title="Finisher (8 min)" open={false}>
-        {plan.finisher}
+        <BulletList text={plan.finisher} />
       </Collapsible>
     </div>
   );
