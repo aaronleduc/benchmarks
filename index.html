@@ -551,7 +551,7 @@ function App() {
               </div>
               <div className="wt-field">
                 <label>Reps</label>
-                <input type="text" placeholder={ex.scheme.split('×')[1] ? ex.scheme.split('×')[1].trim() : ''} value={entry.reps || ''} onChange={(e) => updateField(ex.id, 'reps', e.target.value)} />
+                <input type="text" inputMode="numeric" placeholder={ex.scheme.split('×')[1] ? ex.scheme.split('×')[1].trim() : ''} value={entry.reps || ''} onChange={(e) => updateField(ex.id, 'reps', e.target.value)} />
               </div>
               <div className="wt-field">
                 <label>Weight</label>
