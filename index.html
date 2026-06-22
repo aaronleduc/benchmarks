@@ -9,25 +9,26 @@
 <meta name="apple-mobile-web-app-title" content="Benchmarks" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" href="icon.png" />
-<meta name="theme-color" content="#15151a" />
+<meta name="theme-color" content="#0a0f1e" />
 <title>Benchmarks</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  html, body, #root { margin: 0; padding: 0; min-height: 100%; background: #15151a; }
+  html, body, #root { margin: 0; padding: 0; min-height: 100%; background: #0a0f1e; }
   * { box-sizing: border-box; }
 
   .wt-root {
-    --bg: #15151a;
-    --surface: #1f2024;
-    --surface-2: #2a2b31;
-    --line: #35363d;
-    --text: #ededea;
-    --muted: #8e8d96;
-    --accent: #ff5a36;
-    --accent-soft: rgba(255, 90, 54, 0.16);
-    --good: #4ade80;
-    --good-soft: rgba(74, 222, 128, 0.14);
+    --bg: #0a0f1e;
+    --surface: #111827;
+    --surface-2: #1a2236;
+    --line: #1e2d45;
+    --text: #e8edf7;
+    --muted: #6b7fa3;
+    --accent: #38bdf8;
+    --accent-soft: rgba(56, 189, 248, 0.12);
+    --good: #34d399;
+    --good-soft: rgba(52, 211, 153, 0.12);
+    --accent-dark: #0c1f38;
     font-family: 'Inter', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
@@ -37,166 +38,84 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  .wt-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+  .wt-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
   .wt-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0; }
   .wt-title span { color: var(--accent); }
-  .wt-sheet-link { font-size: 12px; color: var(--muted); text-decoration: none; border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; white-space: nowrap; transition: border-color 0.15s, color 0.15s; }
-  .wt-sheet-link:hover { border-color: var(--accent); color: var(--text); }
 
-  .wt-connect-row { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-  .wt-connect-btn { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; border: none; border-radius: 8px; padding: 9px 16px; cursor: pointer; transition: filter 0.15s, transform 0.05s; }
-  .wt-connect-btn:active { transform: scale(0.98); }
-  .wt-connect-btn.connected { background: var(--good-soft); color: var(--good); border: 1px solid rgba(74, 222, 128, 0.35); }
-  .wt-connect-btn.disconnected { background: var(--accent); color: #1a0f0b; }
-  .wt-connect-btn.disconnected:hover { filter: brightness(1.08); }
-  .wt-connect-btn:disabled { opacity: 0.5; cursor: wait; }
+  .wt-status-pill { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; white-space: nowrap; display: flex; align-items: center; gap: 5px; }
+  .wt-status-pill.ready { border-color: rgba(52, 211, 153, 0.4); color: var(--good); }
+  .wt-status-pill.error { border-color: rgba(248, 113, 113, 0.4); color: #f87171; }
+  .wt-status-pill .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
-  .wt-status { font-size: 12.5px; padding: 4px 0; }
-  .wt-status.error { color: var(--accent); }
+  .wt-status { font-size: 12.5px; padding: 4px 0; margin-bottom: 8px; }
+  .wt-status.error { color: #f87171; }
   .wt-status.success { color: var(--good); }
   .wt-status.pending { color: var(--muted); }
 
-  .wt-controls { display: flex; gap: 10px; align-items: stretch; margin-bottom: 16px; flex-wrap: wrap; }
-  .wt-date { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 15px; font-family: 'Inter', sans-serif; flex: 1; min-width: 140px; }
-  .wt-date::-webkit-calendar-picker-indicator { filter: invert(1); }
+  .wt-controls { display: flex; gap: 10px; align-items: stretch; margin-bottom: 16px; }
+  .wt-date { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 9px 12px; font-size: 15px; font-family: 'Inter', sans-serif; flex: 1; }
+  .wt-date::-webkit-calendar-picker-indicator { filter: invert(0.6) sepia(1) saturate(3) hue-rotate(175deg); }
 
   .wt-days { display: flex; gap: 8px; margin-bottom: 16px; }
   .wt-day-btn { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 8px; cursor: pointer; text-align: left; transition: border-color 0.15s, background 0.15s; }
   .wt-day-btn.active { border-color: var(--accent); background: var(--accent-soft); }
-  .wt-day-label { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .wt-day-label { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   .wt-day-btn.active .wt-day-label { color: var(--accent); }
-  .wt-day-sub { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .wt-day-sub { font-size: 11px; color: var(--muted); margin-top: 2px; opacity: 0.7; }
 
-  .wt-bar-wrap { display: flex; align-items: center; gap: 6px; margin-bottom: 18px; padding: 0 2px; }
-  .wt-bar-track { flex: 1; height: 4px; background: var(--line); border-radius: 2px; position: relative; overflow: hidden; }
-  .wt-bar-fill { position: absolute; inset: 0; background: var(--accent); border-radius: 2px; transition: width 0.3s ease; }
+  .wt-bar-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
+  .wt-bar-track { flex: 1; height: 3px; background: var(--line); border-radius: 2px; position: relative; overflow: hidden; }
+  .wt-bar-fill { position: absolute; inset: 0; background: var(--accent); border-radius: 2px; transition: width 0.4s ease; }
   .wt-bar-count { font-family: 'Oswald', sans-serif; font-size: 12px; color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; }
 
-  .wt-collapsible { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 12px; overflow: hidden; }
+  .wt-collapsible { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; overflow: hidden; }
   .wt-collapsible-head { display: flex; justify-content: space-between; align-items: center; padding: 11px 14px; cursor: pointer; user-select: none; }
-  .wt-collapsible-title { font-family: 'Oswald', sans-serif; font-size: 12.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+  .wt-collapsible-title { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
   .wt-collapsible-chevron { color: var(--muted); font-size: 14px; transition: transform 0.2s; display: inline-block; }
   .wt-collapsible-chevron.open { transform: rotate(180deg); }
   .wt-collapsible-body { padding: 0 14px 13px; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
   .wt-bullets { margin: 0; padding-left: 18px; }
-  .wt-bullets li { margin-bottom: 4px; }
+  .wt-bullets li { margin-bottom: 5px; }
   .wt-bullets li:last-child { margin-bottom: 0; }
 
-  .wt-exercise-last { font-size: 11.5px; color: var(--muted); margin-top: 3px; }
-  .wt-video-link {
-    flex-shrink: 0;
-    width: 30px; height: 30px;
-    display: flex; align-items: center; justify-content: center;
-    border: 1px solid var(--line);
-    border-radius: 50%;
-    color: var(--muted);
-    text-decoration: none;
-    font-size: 12px;
-    transition: border-color 0.15s, color 0.15s;
-  }
-  .wt-video-link:hover { border-color: var(--accent); color: var(--accent); }
-
   .wt-exercise { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 10px; transition: border-color 0.2s; }
-  .wt-exercise.saved { border-color: rgba(74, 222, 128, 0.35); }
-  .wt-exercise-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
-  .wt-exercise-name { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: 0.01em; }
-  .wt-exercise-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .wt-exercise.saved { border-color: rgba(52, 211, 153, 0.35); }
+  .wt-exercise-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+  .wt-exercise-name { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 16px; letter-spacing: 0.02em; color: var(--text); }
+  .wt-exercise-meta { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .wt-exercise-last { font-size: 11.5px; color: var(--accent); margin-top: 3px; opacity: 0.8; }
   .wt-exercise-note { font-size: 11px; color: var(--accent); margin-top: 3px; font-style: italic; }
 
+  .wt-video-link { background: none; flex-shrink: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); text-decoration: none; font-size: 11px; transition: border-color 0.15s, color 0.15s; cursor: pointer; }
+  .wt-video-link:hover { border-color: var(--accent); color: var(--accent); }
+
   .wt-field-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-  .wt-field label { display: block; font-size: 10.5px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+  .wt-field label { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
   .wt-field input { width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 7px; color: var(--text); padding: 9px 10px; font-size: 16px; font-family: 'Inter', sans-serif; }
   .wt-field input:focus { outline: none; border-color: var(--accent); }
   .wt-notes-row { display: flex; gap: 8px; align-items: flex-end; }
   .wt-notes-row .wt-field { flex: 1; }
 
-  .wt-log-btn { background: var(--accent); color: #1a0f0b; border: none; border-radius: 7px; padding: 9px 16px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; white-space: nowrap; transition: filter 0.15s, transform 0.05s; }
+  .wt-log-btn { background: var(--accent); color: #0a0f1e; border: none; border-radius: 7px; padding: 9px 16px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; white-space: nowrap; transition: filter 0.15s, transform 0.05s; }
   .wt-log-btn:active { transform: scale(0.97); }
-  .wt-log-btn:hover { filter: brightness(1.08); }
-  .wt-log-btn.saved { background: var(--good-soft); color: var(--good); border: 1px solid rgba(74, 222, 128, 0.35); }
+  .wt-log-btn:hover { filter: brightness(1.1); }
+  .wt-log-btn.saved { background: var(--good-soft); color: var(--good); border: 1px solid rgba(52, 211, 153, 0.35); }
 
-  .wt-video-link { background: none; }
-
-  .wt-modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    z-index: 50;
-    padding: 0;
-  }
-  .wt-modal {
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 16px 16px 0 0;
-    padding: 16px;
-    width: 100%;
-    max-width: 480px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .wt-modal-title {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: 0.04em;
-    align-self: flex-start;
-  }
-  .wt-video-toggle {
-    display: flex;
-    gap: 8px;
-    width: 100%;
-  }
-  .wt-toggle-btn {
-    flex: 1;
-    background: var(--surface-2);
-    border: 1px solid var(--line);
-    border-radius: 7px;
-    color: var(--muted);
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    padding: 7px;
-    cursor: pointer;
-  }
-  .wt-toggle-btn.active {
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-soft);
-  }
-  .wt-modal-video {
-    width: 100%;
-    border-radius: 8px;
-    display: block;
-    background: #000;
-  }
-  .wt-modal-notes {
-    margin: 0;
-    padding-left: 18px;
-    width: 100%;
-    color: var(--muted);
-    font-size: 13.5px;
-    line-height: 1.6;
-  }
+  .wt-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: flex; align-items: flex-end; justify-content: center; z-index: 50; }
+  .wt-modal { background: var(--surface); border: 1px solid var(--line); border-top: 1px solid rgba(56,189,248,0.2); border-radius: 20px 20px 0 0; padding: 16px; width: 100%; max-width: 480px; display: flex; flex-direction: column; align-items: center; gap: 12px; max-height: 90vh; overflow-y: auto; }
+  .wt-modal-handle { width: 36px; height: 4px; background: var(--line); border-radius: 2px; margin-bottom: 4px; }
+  .wt-modal-title { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 18px; letter-spacing: 0.04em; align-self: flex-start; color: var(--text); }
+  .wt-video-toggle { display: flex; gap: 8px; width: 100%; }
+  .wt-toggle-btn { flex: 1; background: var(--surface-2); border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; padding: 7px; cursor: pointer; transition: all 0.15s; }
+  .wt-toggle-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+  .wt-modal-video { width: 100%; border-radius: 10px; display: block; background: #000; }
+  .wt-modal-notes { margin: 0; padding-left: 18px; width: 100%; color: var(--muted); font-size: 13.5px; line-height: 1.6; }
   .wt-modal-notes li { margin-bottom: 6px; }
-  .wt-modal-close {
-    background: var(--accent);
-    color: #1a0f0b;
-    border: none;
-    border-radius: 7px;
-    padding: 10px 24px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 14px;
-    cursor: pointer;
-    width: 100%;
-  }
+  .wt-modal-close { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); border-radius: 7px; padding: 10px 24px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; width: 100%; transition: border-color 0.15s, color 0.15s; }
+  .wt-modal-close:hover { border-color: var(--accent); color: var(--accent); }
+
+  .wt-export-btn { background: none; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 6px 12px; cursor: pointer; transition: border-color 0.15s, color 0.15s; white-space: nowrap; }
+  .wt-export-btn:hover { border-color: var(--accent); color: var(--accent); }
 
   @media (max-width: 380px) {
     .wt-title { font-size: 22px; }
@@ -209,15 +128,33 @@
 <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/@babel/standalone@7.23.10/babel.min.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC6TXH3gK0E6mJEe-uSkXTsGIVhopevNbI",
+    authDomain: "benchmarks-310fd.firebaseapp.com",
+    projectId: "benchmarks-310fd",
+    storageBucket: "benchmarks-310fd.firebasestorage.app",
+    messagingSenderId: "825090066781",
+    appId: "1:825090066781:web:8742272105ddf46453c0b4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  window.__db = db;
+  window.__fbReady = true;
+  window.__collection = collection;
+  window.__addDoc = addDoc;
+  window.__getDocs = getDocs;
+  window.__query = query;
+  window.__orderBy = orderBy;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
 
 <script type="text/babel" data-presets="react">
 const { useState, useEffect, useRef } = React;
-
-const CLIENT_ID = '888845567536-3j8e4gi1nsrjt97bknifavfjsdn1mk35.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyBaAVdujpClzPyku9pU6Nfk-vRboVJmr94';
-const SPREADSHEET_ID = '1CvxPW3qPg_2bwb7MwDW9L2G6Q-uR8Lvl1MTYfwztD-o';
-const SHEET_RANGE = 'Sheet1!A:G';
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 const PLAN = {
   day1: {
@@ -228,7 +165,7 @@ const PLAN = {
     exercises: [
       { id: 'd1-1', name: 'Deadlift', scheme: '3 × 8–10', rest: '90 sec rest', videos: ['videos/day-one/deadlift-front.mp4', 'videos/day-one/deadlift-side.mp4'], formNotes: ['Stand with your mid-foot under the bar and grip the bar with your hands, about a shoulder width apart.', 'Bend your knees, then lift the bar by straightening your back. It is important to keep your back straight.', 'Stand to your full height and hold.', 'Lower the bar to the floor by bending your knees and keeping your back straight.'] },
       { id: 'd1-2', name: 'Barbell Squat', scheme: '3 × 12–15', rest: '75 sec rest', videos: ['videos/day-one/barbell-squat-front.mp4', 'videos/day-one/barbell-squat-side.mp4'], formNotes: ['Stand with your feet shoulder-width apart. Maintain the natural arch in your back, squeezing your shoulder blades and raising your chest.', 'Grip the bar across your shoulders and support it on your upper back. Unwrack the bar by straightening your legs, and take a step back.', 'Bend your knees as you lower the weight without altering the form of your back until your hips are below your knees.', 'Raise the bar back to starting position, lift with your legs and exhale at the top.'] },
-      { id: 'd1-3', name: 'Incline Dumbbell Press', scheme: '3 × 12–15', rest: '75 sec rest', videos: ['videos/day-one/incline-dumbbell-press-front.mp4', 'videos/day-one/incline-dumbbell-press-side.mp4'], formNotes: ['Lay flat on the incline bench with your feet on the ground. Raise the dumbbells until you have straight arms.', 'Lower the dumbbells to your mid chest.', 'Raise the dumbbells until you\'ve locked your elbows.'] },
+      { id: 'd1-3', name: 'Incline Dumbbell Press', scheme: '3 × 12–15', rest: '75 sec rest', videos: ['videos/day-one/incline-dumbbell-press-front.mp4', 'videos/day-one/incline-dumbbell-press-side.mp4'], formNotes: ['Lay flat on the incline bench with your feet on the ground. Raise the dumbbells until you have straight arms.', 'Lower the dumbbells to your mid chest.', "Raise the dumbbells until you've locked your elbows."] },
       { id: 'd1-4', name: 'Cable Wood Chopper', scheme: '3 × 12 each side', rest: '60 sec rest', videos: ['videos/day-one/cable-woodchopper-front.mp4', 'videos/day-one/cable-woodchopper-side.mp4'], formNotes: ['Set the cable at about nipple level. Use a handle attachment.', 'Face sideways, then rotate your torso with your arms extended against the resistance.', 'After completing your given number of reps, face the opposite direction and repeat.'] },
       { id: 'd1-5', name: 'Seated Cable Row', scheme: '3 × 12–15', rest: '75 sec rest', videos: ['videos/day-one/seated-cable-row-front.mp4', 'videos/day-one/seated-cable-row-side.mp4'], formNotes: ['Sit with your back straight on the machine and grip the handles.', 'Pull the handles back using your arms. Your legs and torso should be at a 90° angle. Push out your chest.', 'Pull the handles towards your body until your hands are beside your abdomen.'] },
       { id: 'd1-6', name: 'Pallof Press', scheme: '3 × 12 each side', rest: '60 sec rest', videos: ['videos/day-one/pallof-press-front.mp4', 'videos/day-one/pallof-press-side.mp4'], formNotes: ['Use a handle attachment, set the cable at nipple level, walk a few steps away, and face sideways.', 'Start with both hands on the handle and your fists against your chest.', 'Press the handle forward until your elbows are fully extended, then pull the handle back to your chest.'] },
@@ -255,7 +192,7 @@ const PLAN = {
     warmup: "Row 3 min easy · world's greatest stretch ×5 each side · thoracic rotations ×10 each side · leg swings ×10 each direction",
     finisher: 'Incline treadmill walk — 3.5–4 mph, 8–10% incline',
     exercises: [
-      { id: 'd3-1', name: 'Romanian Deadlift', scheme: '3 × 10–12', rest: '90 sec rest', videos: ['videos/day-three/romanian-deadlift-front.mp4', 'videos/day-three/romanian-deadlift-side.mp4'], formNotes: ['Take a shoulder width, double overhand or mixed grip.', 'Push your hips back while leaving your knees mostly extended. Look for a stretch in your hamstrings.', 'When you feel the stretch, push your hips forward until you\'re back in a standing position.'] },
+      { id: 'd3-1', name: 'Romanian Deadlift', scheme: '3 × 10–12', rest: '90 sec rest', videos: ['videos/day-three/romanian-deadlift-front.mp4', 'videos/day-three/romanian-deadlift-side.mp4'], formNotes: ['Take a shoulder width, double overhand or mixed grip.', 'Push your hips back while leaving your knees mostly extended. Look for a stretch in your hamstrings.', "When you feel the stretch, push your hips forward until you're back in a standing position."] },
       { id: 'd3-2', name: 'Dumbbell Bench Press', scheme: '3 × 12–15', rest: '75 sec rest', videos: ['videos/day-three/dumbbell-bench-press-front.mp4', 'videos/day-three/dumbbell-bench-press-side.mp4'], formNotes: ['Start by lying flat on a bench with a dumbbell in each hand.', 'Hold the dumbbells at chest level with your palms facing forward.', 'Engage your core and press the dumbbells upward until your arms are fully extended.'] },
       { id: 'd3-3', name: 'Seated Leg Curl', scheme: '3 × 12–15', rest: '75 sec rest', videos: ['videos/day-three/seated-leg-curl-front.mp4', 'videos/day-three/seated-leg-curl-side.mp4'], formNotes: ['Sit on the machine. Adjust the back pad to where the leg pad is just above your knees.', 'Adjust the leg pad that goes on your lower leg until it\'s on your achilles.', 'Use the two handles to push yourself back in the chair. Curl your legs as far as possible, and then extend your knees. Do not hyperextend.'] },
       { id: 'd3-4', name: 'Half Kneeling Wood Chopper', scheme: '3 × 10 each side', rest: '75 sec rest', videos: ['videos/day-three/half-kneeling-wood-chopper-front.mp4', 'videos/day-three/half-kneeling-wood-chopper-side.mp4'], formNotes: ['Set the cable at nipple level. Take a half kneeling position. Use a handle attachment.', 'Face sideways, then rotate your torso with your arms extended against the resistance.', 'After completing your given number of reps, face the opposite direction and repeat.'] },
@@ -268,8 +205,7 @@ const PLAN = {
 
 function todayISO() {
   const d = new Date();
-  const off = d.getTimezoneOffset();
-  return new Date(d.getTime() - off * 60000).toISOString().slice(0, 10);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
 }
 
 function VideoModal({ videos, formNotes }) {
@@ -278,38 +214,20 @@ function VideoModal({ videos, formNotes }) {
     <div style={{ width: '100%' }}>
       <div className="wt-video-toggle">
         {['Front', 'Side'].map((label, i) => (
-          <button
-            key={i}
-            className={`wt-toggle-btn ${active === i ? 'active' : ''}`}
-            onClick={() => setActive(i)}
-          >{label}</button>
+          <button key={i} className={`wt-toggle-btn ${active === i ? 'active' : ''}`} onClick={() => setActive(i)}>{label}</button>
         ))}
       </div>
-      <video
-        key={videos[active]}
-        src={videos[active]}
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="wt-modal-video"
-      />
+      <video key={videos[active]} src={videos[active]} autoPlay loop muted playsInline className="wt-modal-video" />
       {formNotes && formNotes.length > 0 && (
-        <ul className="wt-modal-notes">
-          {formNotes.map((n, i) => <li key={i}>{n}</li>)}
-        </ul>
+        <ul className="wt-modal-notes">{formNotes.map((n, i) => <li key={i}>{n}</li>)}</ul>
       )}
     </div>
   );
 }
 
 function BulletList({ text }) {
-  const items = text.split('·').map((s) => s.trim()).filter(Boolean);
-  return (
-    <ul className="wt-bullets">
-      {items.map((item, i) => <li key={i}>{item}</li>)}
-    </ul>
-  );
+  const items = text.split('·').map(s => s.trim()).filter(Boolean);
+  return <ul className="wt-bullets">{items.map((item, i) => <li key={i}>{item}</li>)}</ul>;
 }
 
 function Collapsible({ title, children, open, onToggle }) {
@@ -332,176 +250,118 @@ function App() {
   const [date, setDate] = useState(todayISO());
   const [logs, setLogs] = useState({});
   const [warmupOpen, setWarmupOpen] = useState(false);
-  const [signedIn, setSignedIn] = useState(false);
-  const [apiReady, setApiReady] = useState(false);
+  const [modal, setModal] = useState(null);
   const [lastWeights, setLastWeights] = useState({});
-  const [modalGif, setModalGif] = useState(null);
+  const [dbReady, setDbReady] = useState(false);
   const [status, setStatus] = useState(null);
-  const tokenClientRef = useRef(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    const gapiScript = document.createElement('script');
-    gapiScript.src = 'https://apis.google.com/js/api.js';
-    gapiScript.async = true;
-    gapiScript.defer = true;
-    gapiScript.onload = () => {
-      if (cancelled) return;
-      window.gapi.load('client', async () => {
-        try {
-          await window.gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
-          });
-          if (!cancelled) setApiReady(true);
-        } catch (e) {
-          if (!cancelled) setStatus({ type: 'error', text: 'Could not load Google Sheets API.' });
-        }
-      });
+    const onReady = async () => {
+      setDbReady(true);
+      await loadLastWeights();
     };
-    gapiScript.onerror = () => {
-      if (!cancelled) setStatus({ type: 'error', text: 'Failed to load Google API script.' });
-    };
-    document.body.appendChild(gapiScript);
-
-    const gisScript = document.createElement('script');
-    gisScript.src = 'https://accounts.google.com/gsi/client';
-    gisScript.async = true;
-    gisScript.defer = true;
-    gisScript.onload = () => {
-      if (cancelled) return;
-      tokenClientRef.current = window.google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: (resp) => {
-          if (resp && resp.access_token) {
-            window.gapi.client.setToken(resp);
-            setSignedIn(true);
-            setStatus({ type: 'success', text: 'Connected to your sheet.' });
-          }
-        },
-      });
-    };
-    gisScript.onerror = () => {
-      if (!cancelled) setStatus({ type: 'error', text: 'Failed to load Google sign-in script.' });
-    };
-    document.body.appendChild(gisScript);
-
-    return () => { cancelled = true; };
+    if (window.__fbReady) {
+      onReady();
+    } else {
+      window.addEventListener('firebase-ready', onReady, { once: true });
+    }
   }, []);
 
-  const connect = () => {
-    if (tokenClientRef.current) {
-      tokenClientRef.current.requestAccessToken({ prompt: signedIn ? '' : 'consent' });
-    } else {
-      setStatus({ type: 'error', text: 'Still loading — try again in a moment.' });
+  const loadLastWeights = async () => {
+    try {
+      const db = window.__db;
+      const q = window.__query(window.__collection(db, 'workoutLogs'), window.__orderBy('date', 'asc'));
+      const snap = await window.__getDocs(q);
+      const map = {};
+      snap.forEach(doc => {
+        const d = doc.data();
+        if (d.exercise && d.weight) {
+          map[d.exercise] = { weight: d.weight, date: d.date };
+        }
+      });
+      setLastWeights(map);
+    } catch (e) {
+      // fail quietly
     }
   };
 
-  // Once connected, pull the sheet and find the most recent weight logged per exercise.
-  useEffect(() => {
-    if (!signedIn) return;
-    (async () => {
-      try {
-        const res = await window.gapi.client.sheets.spreadsheets.values.get({
-          spreadsheetId: SPREADSHEET_ID,
-          range: SHEET_RANGE,
-        });
-        const rows = (res.result.values || []).slice(1); // skip header
-        const map = {};
-        rows.forEach((row) => {
-          const [rowDate, , exName, , , weight] = row;
-          if (exName && weight) {
-            map[exName] = { weight, date: rowDate };
-          }
-        });
-        setLastWeights(map);
-      } catch (e) {
-        // non-critical, fail quietly
-      }
-    })();
-  }, [signedIn]);
-
   const updateField = (id, field, value) => {
-    setLogs((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], [field]: value, saved: false },
-    }));
+    setLogs(prev => ({ ...prev, [id]: { ...prev[id], [field]: value, saved: false } }));
   };
 
   const logExercise = async (ex) => {
-    if (!signedIn) {
-      setStatus({ type: 'error', text: 'Connect to Google Sheets first.' });
+    if (!dbReady) {
+      setStatus({ type: 'error', text: 'Database not ready yet — try again in a moment.' });
       return;
     }
     const entry = logs[ex.id] || {};
-    const row = [
-      date,
-      PLAN[dayKey].label,
-      ex.name,
-      entry.sets || '',
-      entry.reps || '',
-      entry.weight || '',
-      entry.notes || '',
-    ];
     setStatus({ type: 'pending', text: `Saving ${ex.name}…` });
     try {
-      await window.gapi.client.sheets.spreadsheets.values.append({
-        spreadsheetId: SPREADSHEET_ID,
-        range: SHEET_RANGE,
-        valueInputOption: 'USER_ENTERED',
-        insertDataOption: 'INSERT_ROWS',
-        resource: { values: [row] },
+      await window.__addDoc(window.__collection(window.__db, 'workoutLogs'), {
+        date,
+        day: PLAN[dayKey].label,
+        exercise: ex.name,
+        sets: entry.sets || '',
+        reps: entry.reps || '',
+        weight: entry.weight || '',
+        notes: entry.notes || '',
+        createdAt: new Date().toISOString(),
       });
-      setLogs((prev) => ({ ...prev, [ex.id]: { ...prev[ex.id], saved: true } }));
+      setLogs(prev => ({ ...prev, [ex.id]: { ...prev[ex.id], saved: true } }));
       if (entry.weight) {
-        setLastWeights((prev) => ({ ...prev, [ex.name]: { weight: entry.weight, date } }));
+        setLastWeights(prev => ({ ...prev, [ex.name]: { weight: entry.weight, date } }));
       }
       setStatus({ type: 'success', text: `${ex.name} logged.` });
     } catch (e) {
-      const reason = e && e.result && e.result.error ? e.result.error.message : '';
-      const expired = reason.toLowerCase().includes('invalid') || reason.toLowerCase().includes('expired') || reason.toLowerCase().includes('unauthorized');
-      if (expired) {
-        setSignedIn(false);
-        setStatus({ type: 'error', text: 'Session expired — tap Connect to reconnect, then log again.' });
-      } else {
-        setStatus({ type: 'error', text: `Couldn't save ${ex.name}${reason ? ': ' + reason : ''}` });
-      }
+      setStatus({ type: 'error', text: `Couldn't save ${ex.name}: ${e.message || 'unknown error'}` });
+    }
+  };
+
+  const exportCSV = async () => {
+    if (!dbReady) return;
+    try {
+      const db = window.__db;
+      const q = window.__query(window.__collection(db, 'workoutLogs'), window.__orderBy('date', 'asc'));
+      const snap = await window.__getDocs(q);
+      const rows = [['Date', 'Day', 'Exercise', 'Sets', 'Reps', 'Weight', 'Notes']];
+      snap.forEach(doc => {
+        const d = doc.data();
+        rows.push([d.date, d.day, d.exercise, d.sets, d.reps, d.weight, d.notes]);
+      });
+      const csv = rows.map(r => r.map(v => `"${(v||'').toString().replace(/"/g,'""')}"`).join(',')).join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `benchmarks-${todayISO()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setStatus({ type: 'success', text: 'CSV exported.' });
+    } catch (e) {
+      setStatus({ type: 'error', text: 'Export failed.' });
     }
   };
 
   const plan = PLAN[dayKey];
-  const loggedCount = plan.exercises.filter((ex) => logs[ex.id] && logs[ex.id].saved).length;
+  const loggedCount = plan.exercises.filter(ex => logs[ex.id] && logs[ex.id].saved).length;
 
   return (
     <div className="wt-root">
       <div className="wt-header">
         <h1 className="wt-title">Bench<span>marks</span></h1>
-        <a
-          className="wt-sheet-link"
-          href={`https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/edit`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          View sheet ↗
-        </a>
-      </div>
-
-      <div className="wt-connect-row">
-        <button
-          className={`wt-connect-btn ${signedIn ? 'connected' : 'disconnected'}`}
-          onClick={connect}
-          disabled={!apiReady}
-        >
-          {!apiReady ? 'Loading…' : signedIn ? '● Connected' : 'Connect to Google Sheets'}
-        </button>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <button className="wt-export-btn" onClick={exportCSV}>Export CSV</button>
+          <div className={`wt-status-pill ${dbReady ? 'ready' : ''}`}>
+            <span className="dot" />
+            {dbReady ? 'Live' : 'Connecting…'}
+          </div>
+        </div>
       </div>
 
       {status && <div className={`wt-status ${status.type}`}>{status.text}</div>}
 
       <div className="wt-controls">
-        <input className="wt-date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+        <input className="wt-date" type="date" value={date} onChange={e => setDate(e.target.value)} />
       </div>
 
       <div className="wt-days">
@@ -524,7 +384,7 @@ function App() {
         <BulletList text={plan.warmup} />
       </Collapsible>
 
-      {plan.exercises.map((ex) => {
+      {plan.exercises.map(ex => {
         const entry = logs[ex.id] || {};
         return (
           <div key={ex.id} className={`wt-exercise ${entry.saved ? 'saved' : ''}`}>
@@ -533,36 +393,31 @@ function App() {
                 <div className="wt-exercise-name">{ex.name}</div>
                 <div className="wt-exercise-meta">{ex.scheme} · {ex.rest}</div>
                 {lastWeights[ex.name] && (
-                  <div className="wt-exercise-last">Last: {lastWeights[ex.name].weight} lbs ({lastWeights[ex.name].date})</div>
+                  <div className="wt-exercise-last">Last: {lastWeights[ex.name].weight} lbs · {lastWeights[ex.name].date}</div>
                 )}
-                {ex.note && <div className="wt-exercise-note">{ex.note}</div>}
               </div>
-              {ex.videos ? (
-                <button className="wt-video-link" onClick={() => setModalGif({ videos: ex.videos, formNotes: ex.formNotes, name: ex.name })} title="Form demo">▶</button>
-              ) : ex.video ? (
-                <a className="wt-video-link" href={ex.video} target="_blank" rel="noopener noreferrer" title="Form video">▶</a>
-              ) : (
-                <a className="wt-video-link" href={`https://www.youtube.com/results?search_query=${encodeURIComponent(ex.name + ' exercise form')}`} target="_blank" rel="noopener noreferrer" title="Form video">▶</a>
+              {ex.videos && (
+                <button className="wt-video-link" onClick={() => setModal({ videos: ex.videos, formNotes: ex.formNotes, name: ex.name })}>▶</button>
               )}
             </div>
             <div className="wt-field-grid">
               <div className="wt-field">
                 <label>Sets</label>
-                <input type="text" inputMode="numeric" placeholder={ex.scheme.split('×')[0].trim()} value={entry.sets || ''} onChange={(e) => updateField(ex.id, 'sets', e.target.value)} />
+                <input type="text" inputMode="numeric" placeholder={ex.scheme.split('×')[0].trim()} value={entry.sets || ''} onChange={e => updateField(ex.id, 'sets', e.target.value)} />
               </div>
               <div className="wt-field">
                 <label>Reps</label>
-                <input type="text" inputMode="numeric" placeholder="" value={entry.reps || ''} onChange={(e) => updateField(ex.id, 'reps', e.target.value)} />
+                <input type="text" inputMode="numeric" placeholder="" value={entry.reps || ''} onChange={e => updateField(ex.id, 'reps', e.target.value)} />
               </div>
               <div className="wt-field">
                 <label>Weight</label>
-                <input type="text" inputMode="decimal" placeholder="lbs" value={entry.weight || ''} onChange={(e) => updateField(ex.id, 'weight', e.target.value)} />
+                <input type="text" inputMode="decimal" placeholder="lbs" value={entry.weight || ''} onChange={e => updateField(ex.id, 'weight', e.target.value)} />
               </div>
             </div>
             <div className="wt-notes-row">
               <div className="wt-field">
                 <label>Notes</label>
-                <input type="text" placeholder="" value={entry.notes || ''} onChange={(e) => updateField(ex.id, 'notes', e.target.value)} />
+                <input type="text" placeholder="" value={entry.notes || ''} onChange={e => updateField(ex.id, 'notes', e.target.value)} />
               </div>
               <button className={`wt-log-btn ${entry.saved ? 'saved' : ''}`} onClick={() => logExercise(ex)}>
                 {entry.saved ? '✓ Logged' : 'Log'}
@@ -572,16 +427,17 @@ function App() {
         );
       })}
 
-      <Collapsible title="Finisher (8 min)" open={false}>
+      <Collapsible title="Finisher" open={false}>
         <BulletList text={plan.finisher} />
       </Collapsible>
 
-      {modalGif && (
-        <div className="wt-modal-overlay" onClick={() => setModalGif(null)}>
-          <div className="wt-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="wt-modal-title">{modalGif.name}</div>
-            <VideoModal videos={modalGif.videos} formNotes={modalGif.formNotes} />
-            <button className="wt-modal-close" onClick={() => setModalGif(null)}>Close</button>
+      {modal && (
+        <div className="wt-modal-overlay" onClick={() => setModal(null)}>
+          <div className="wt-modal" onClick={e => e.stopPropagation()}>
+            <div className="wt-modal-handle" />
+            <div className="wt-modal-title">{modal.name}</div>
+            <VideoModal videos={modal.videos} formNotes={modal.formNotes} />
+            <button className="wt-modal-close" onClick={() => setModal(null)}>Close</button>
           </div>
         </div>
       )}
