@@ -34,7 +34,7 @@
     color: var(--text);
     min-height: 100vh;
     width: 100%;
-    padding: calc(18px + env(safe-area-inset-top)) 16px calc(96px + env(safe-area-inset-bottom));
+    padding: calc(18px + env(safe-area-inset-top)) 16px calc(80px + env(safe-area-inset-bottom));
     -webkit-font-smoothing: antialiased;
   }
 
@@ -121,74 +121,61 @@
     .wt-title { font-size: 22px; }
   }
 
-  .wt-timer-bar {
+  /* Bottom nav */
+  .wt-nav {
     position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    bottom: 0; left: 0; right: 0;
     background: var(--surface);
     border-top: 1px solid var(--line);
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
     display: flex;
-    align-items: center;
-    gap: 12px;
     z-index: 40;
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  .wt-timer-display {
-    font-family: 'Oswald', sans-serif;
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: var(--text);
-    min-width: 72px;
-    transition: color 0.3s;
+  .wt-nav-btn {
+    flex: 1; background: none; border: none; cursor: pointer;
+    padding: 10px 0 8px;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    color: var(--muted); font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 600;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    transition: color 0.15s;
   }
-  .wt-timer-display.done { color: var(--accent); }
-  .wt-timer-display.warning { color: #fbbf24; }
-  .wt-timer-info {
-    flex: 1;
-    min-width: 0;
-  }
-  .wt-timer-label {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .wt-timer-sub {
-    font-size: 10px;
-    color: var(--muted);
-    opacity: 0.6;
-    margin-top: 1px;
-  }
-  .wt-timer-btn {
-    background: var(--accent);
-    color: #0a0f1e;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: filter 0.15s;
-    flex-shrink: 0;
-  }
-  .wt-timer-btn:hover { filter: brightness(1.1); }
-  .wt-timer-btn.running { background: var(--surface-2); color: var(--muted); border: 1px solid var(--line); }
-  .wt-timer-btn.done { background: var(--good-soft); color: var(--good); border: 1px solid rgba(52,211,153,0.35); }
-  .wt-timer-progress {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 2px;
-    background: var(--accent);
-    transition: width 1s linear, background 0.3s;
-  }
+  .wt-nav-btn.active { color: var(--accent); }
+  .wt-nav-icon { font-size: 20px; line-height: 1; }
+
+  /* Progress tab */
+  .pg-root { padding: calc(18px + env(safe-area-inset-top)) 16px calc(80px + env(safe-area-inset-bottom)); }
+  .pg-header { margin-bottom: 20px; }
+  .pg-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0 0 4px; }
+  .pg-title span { color: var(--accent); }
+  .pg-subtitle { font-size: 12px; color: var(--muted); }
+
+  .pg-select-wrap { margin-bottom: 16px; }
+  .pg-select { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--text); padding: 10px 12px; font-size: 15px; font-family: 'Inter', sans-serif; appearance: none; }
+
+  .pg-chart-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
+  .pg-toggle-btn { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--muted); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 13px; padding: 8px; cursor: pointer; transition: all 0.15s; }
+  .pg-toggle-btn.active { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+
+  .pg-card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .pg-card-title { font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .pg-empty { text-align: center; color: var(--muted); font-size: 14px; padding: 40px 0; }
+
+  /* SVG chart */
+  .pg-chart { width: 100%; overflow: visible; }
+  .pg-chart-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .pg-chart-line-vol { stroke: var(--good); }
+  .pg-chart-area { fill: url(#areaGrad); opacity: 0.3; }
+  .pg-chart-area-vol { fill: url(#areaGradVol); }
+  .pg-chart-dot { fill: var(--accent); }
+  .pg-chart-dot-vol { fill: var(--good); }
+  .pg-axis-label { font-size: 9px; fill: var(--muted); font-family: 'Inter', sans-serif; }
+  .pg-grid-line { stroke: var(--line); stroke-width: 1; }
+
+  .pg-stat-row { display: flex; gap: 8px; margin-bottom: 12px; }
+  .pg-stat { flex: 1; background: var(--surface-2); border-radius: 8px; padding: 10px 12px; }
+  .pg-stat-label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
+  .pg-stat-value { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; color: var(--text); }
+  .pg-stat-unit { font-size: 11px; color: var(--muted); margin-left: 2px; }
 </style>
 </head>
 <body>
@@ -314,71 +301,120 @@ function Collapsible({ title, children, open, onToggle }) {
   );
 }
 
-function RestTimer({ seconds, label }) {
-  const [remaining, setRemaining] = useState(seconds);
-  const [running, setRunning] = useState(false);
-  const [total, setTotal] = useState(seconds);
-  const intervalRef = useRef(null);
+function LineChart({ data, color, gradId, label, unit }) {
+  if (!data || data.length < 1) return null;
+  const W = 320, H = 140, PL = 42, PR = 8, PT = 8, PB = 28;
+  const vals = data.map(d => d.value);
+  const minV = Math.min(...vals), maxV = Math.max(...vals);
+  const range = maxV - minV || 1;
+  const xs = data.map((_, i) => PL + (i / Math.max(data.length - 1, 1)) * (W - PL - PR));
+  const ys = data.map(d => PT + (1 - (d.value - minV) / range) * (H - PT - PB));
+  const linePath = xs.map((x, i) => `${i === 0 ? 'M' : 'L'}${x.toFixed(1)},${ys[i].toFixed(1)}`).join(' ');
+  const areaPath = linePath + ` L${xs[xs.length-1].toFixed(1)},${(H-PB).toFixed(1)} L${xs[0].toFixed(1)},${(H-PB).toFixed(1)} Z`;
+  const yTicks = [minV, minV + range * 0.5, maxV].map(v => Math.round(v));
+  const xLabels = data.length <= 6 ? data : [data[0], data[Math.floor(data.length/2)], data[data.length-1]];
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="pg-chart">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.4"/>
+          <stop offset="100%" stopColor={color} stopOpacity="0"/>
+        </linearGradient>
+      </defs>
+      {yTicks.map((t, i) => {
+        const y = PT + (1 - (t - minV) / range) * (H - PT - PB);
+        return (
+          <g key={i}>
+            <line x1={PL} y1={y.toFixed(1)} x2={W - PR} y2={y.toFixed(1)} className="pg-grid-line" strokeDasharray="3,3" />
+            <text x={PL - 4} y={y + 3} className="pg-axis-label" textAnchor="end">{t}</text>
+          </g>
+        );
+      })}
+      {xLabels.map((d, i) => {
+        const idx = data.indexOf(d);
+        return <text key={i} x={xs[idx].toFixed(1)} y={H - 4} className="pg-axis-label" textAnchor="middle">{d.label}</text>;
+      })}
+      <path d={areaPath} fill={`url(#${gradId})`} />
+      <path d={linePath} className={`pg-chart-line ${gradId === 'areaGradVol' ? 'pg-chart-line-vol' : ''}`} />
+      {xs.map((x, i) => <circle key={i} cx={x.toFixed(1)} cy={ys[i].toFixed(1)} r="3" className={`pg-chart-dot ${gradId === 'areaGradVol' ? 'pg-chart-dot-vol' : ''}`} />)}
+    </svg>
+  );
+}
 
-  useEffect(() => {
-    setRemaining(seconds);
-    setTotal(seconds);
-    setRunning(false);
-    clearInterval(intervalRef.current);
-  }, [seconds, label]);
+function ProgressTab({ allLogs }) {
+  const allExercises = [...new Set(Object.values(PLAN).flatMap(d => d.exercises.map(e => e.name)))];
+  const [selectedEx, setSelectedEx] = useState(allExercises[0]);
+  const [chartType, setChartType] = useState('weight');
 
-  useEffect(() => {
-    if (running && remaining > 0) {
-      intervalRef.current = setInterval(() => {
-        setRemaining(prev => {
-          if (prev <= 1) {
-            clearInterval(intervalRef.current);
-            setRunning(false);
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [running]);
+  const exLogs = allLogs
+    .filter(d => d.exercise === selectedEx && d.weight)
+    .sort((a, b) => a.date.localeCompare(b.date));
 
-  const toggle = () => {
-    if (remaining === 0) {
-      setRemaining(total);
-      setRunning(true);
-    } else {
-      setRunning(r => !r);
-    }
-  };
+  const weightData = exLogs.map(d => ({
+    label: d.date.slice(5),
+    value: parseFloat(d.weight) || 0,
+  }));
 
-  const reset = () => {
-    clearInterval(intervalRef.current);
-    setRemaining(total);
-    setRunning(false);
-  };
+  const volumeData = exLogs.map(d => ({
+    label: d.date.slice(5),
+    value: (parseFloat(d.sets) || 0) * (parseFloat(d.reps) || 0) * (parseFloat(d.weight) || 0),
+  }));
 
-  const mins = Math.floor(remaining / 60);
-  const secs = remaining % 60;
-  const display = `${mins}:${secs.toString().padStart(2, '0')}`;
-  const pct = total > 0 ? ((total - remaining) / total) * 100 : 0;
-  const isDone = remaining === 0;
-  const isWarning = remaining <= 10 && remaining > 0 && running;
+  const data = chartType === 'weight' ? weightData : volumeData;
+  const unit = chartType === 'weight' ? 'lbs' : 'lbs total';
+
+  const best = data.length ? Math.max(...data.map(d => d.value)) : null;
+  const latest = data.length ? data[data.length - 1].value : null;
+  const first = data.length ? data[0].value : null;
+  const gain = (best !== null && first !== null) ? (best - first) : null;
 
   return (
-    <div className="wt-timer-bar">
-      <div className="wt-timer-progress" style={{ width: `${pct}%`, background: isDone ? 'var(--good)' : isWarning ? '#fbbf24' : 'var(--accent)' }} />
-      <div className={`wt-timer-display ${isDone ? 'done' : isWarning ? 'warning' : ''}`} onClick={reset} title="Tap to reset">
-        {isDone ? 'REST!' : display}
+    <div className="pg-root">
+      <div className="pg-header">
+        <h1 className="pg-title">Pro<span>gress</span></h1>
+        <div className="pg-subtitle">{allLogs.length} sessions logged</div>
       </div>
-      <div className="wt-timer-info">
-        <div className="wt-timer-label">{label || 'Rest Timer'}</div>
-        <div className="wt-timer-sub">tap time to reset</div>
+
+      <div className="pg-select-wrap">
+        <select className="pg-select" value={selectedEx} onChange={e => setSelectedEx(e.target.value)}>
+          {allExercises.map(ex => <option key={ex} value={ex}>{ex}</option>)}
+        </select>
       </div>
-      <button className={`wt-timer-btn ${isDone ? 'done' : running ? 'running' : ''}`} onClick={toggle}>
-        {isDone ? '↺ Again' : running ? 'Pause' : remaining < total ? 'Resume' : 'Start'}
-      </button>
+
+      <div className="pg-chart-toggle">
+        <button className={`pg-toggle-btn ${chartType === 'weight' ? 'active' : ''}`} onClick={() => setChartType('weight')}>Weight</button>
+        <button className={`pg-toggle-btn ${chartType === 'volume' ? 'active' : ''}`} onClick={() => setChartType('volume')}>Volume</button>
+      </div>
+
+      {data.length === 0 ? (
+        <div className="pg-empty">No data yet for {selectedEx}.</div>
+      ) : (
+        <>
+          <div className="pg-stat-row">
+            <div className="pg-stat">
+              <div className="pg-stat-label">Latest</div>
+              <div className="pg-stat-value">{latest !== null ? Math.round(latest) : '—'}<span className="pg-stat-unit">{unit}</span></div>
+            </div>
+            <div className="pg-stat">
+              <div className="pg-stat-label">Best</div>
+              <div className="pg-stat-value">{best !== null ? Math.round(best) : '—'}<span className="pg-stat-unit">{unit}</span></div>
+            </div>
+            <div className="pg-stat">
+              <div className="pg-stat-label">Gained</div>
+              <div className="pg-stat-value">{gain !== null ? (gain >= 0 ? '+' : '') + Math.round(gain) : '—'}<span className="pg-stat-unit">{unit}</span></div>
+            </div>
+          </div>
+          <div className="pg-card">
+            <div className="pg-card-title">{chartType === 'weight' ? 'Weight over time' : 'Volume over time'}</div>
+            <LineChart
+              data={data}
+              color={chartType === 'weight' ? '#38bdf8' : '#34d399'}
+              gradId={chartType === 'weight' ? 'areaGrad' : 'areaGradVol'}
+              unit={unit}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -390,9 +426,10 @@ function App() {
   const [warmupOpen, setWarmupOpen] = useState(false);
   const [modal, setModal] = useState(null);
   const [lastWeights, setLastWeights] = useState({});
-  const [timer, setTimer] = useState({ seconds: 90, label: 'Rest Timer' });
   const [dbReady, setDbReady] = useState(false);
   const [status, setStatus] = useState(null);
+  const [tab, setTab] = useState('workout');
+  const [allLogs, setAllLogs] = useState([]);
 
   useEffect(() => {
     const onReady = async () => {
@@ -412,13 +449,16 @@ function App() {
       const q = window.__query(window.__collection(db, 'workoutLogs'), window.__orderBy('date', 'asc'));
       const snap = await window.__getDocs(q);
       const map = {};
+      const logs = [];
       snap.forEach(doc => {
         const d = doc.data();
+        logs.push(d);
         if (d.exercise && d.weight) {
           map[d.exercise] = { weight: d.weight, date: d.date };
         }
       });
       setLastWeights(map);
+      setAllLogs(logs);
     } catch (e) {
       // fail quietly
     }
@@ -450,8 +490,8 @@ function App() {
       if (entry.weight) {
         setLastWeights(prev => ({ ...prev, [ex.name]: { weight: entry.weight, date } }));
       }
-      const restSecs = parseInt(ex.rest) || 60;
-      setTimer({ seconds: restSecs, label: ex.name });
+      const newEntry = { date, day: PLAN[dayKey].label, exercise: ex.name, sets: entry.sets||'', reps: entry.reps||'', weight: entry.weight||'', notes: entry.notes||'' };
+      setAllLogs(prev => [...prev, newEntry]);
       setStatus({ type: 'success', text: `${ex.name} logged.` });
     } catch (e) {
       setStatus({ type: 'error', text: `Couldn't save ${ex.name}: ${e.message || 'unknown error'}` });
@@ -487,106 +527,120 @@ function App() {
   const loggedCount = plan.exercises.filter(ex => logs[ex.id] && logs[ex.id].saved).length;
 
   return (
-    <div className="wt-root">
-      <div className="wt-header">
-        <h1 className="wt-title">Bench<span>marks</span></h1>
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <button className="wt-export-btn" onClick={exportCSV}>Export CSV</button>
-          <div className={`wt-status-pill ${dbReady ? 'ready' : ''}`}>
-            <span className="dot" />
-            {dbReady ? 'Live' : 'Connecting…'}
+    <div className="wt-root" style={{ padding: 0 }}>
+      {tab === 'progress' ? (
+        <ProgressTab allLogs={allLogs} />
+      ) : (
+        <div style={{ padding: 'calc(18px + env(safe-area-inset-top)) 16px 0' }}>
+          <div className="wt-header">
+            <h1 className="wt-title">Bench<span>marks</span></h1>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <button className="wt-export-btn" onClick={exportCSV}>Export CSV</button>
+              <div className={`wt-status-pill ${dbReady ? 'ready' : ''}`}>
+                <span className="dot" />
+                {dbReady ? 'Live' : 'Connecting…'}
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {status && <div className={`wt-status ${status.type}`}>{status.text}</div>}
+          {status && <div className={`wt-status ${status.type}`}>{status.text}</div>}
 
-      <div className="wt-controls">
-        <input className="wt-date" type="date" value={date} onChange={e => setDate(e.target.value)} />
-      </div>
+          <div className="wt-controls">
+            <input className="wt-date" type="date" value={date} onChange={e => setDate(e.target.value)} />
+          </div>
 
-      <div className="wt-days">
-        {Object.entries(PLAN).map(([key, d]) => (
-          <button key={key} className={`wt-day-btn ${dayKey === key ? 'active' : ''}`} onClick={() => setDayKey(key)}>
-            <div className="wt-day-label">{d.label}</div>
-            <div className="wt-day-sub">{d.sub}</div>
-          </button>
-        ))}
-      </div>
-
-      <div className="wt-bar-wrap">
-        <div className="wt-bar-track">
-          <div className="wt-bar-fill" style={{ width: `${(loggedCount / plan.exercises.length) * 100}%` }} />
-        </div>
-        <div className="wt-bar-count">{loggedCount}/{plan.exercises.length} logged</div>
-      </div>
-
-      <Collapsible title="Warm-up (7 min)" open={warmupOpen} onToggle={() => setWarmupOpen(!warmupOpen)}>
-        <BulletList text={plan.warmup} />
-      </Collapsible>
-
-      {plan.exercises.map(ex => {
-        const entry = logs[ex.id] || {};
-        return (
-          <div key={ex.id} className={`wt-exercise ${entry.saved ? 'saved' : ''}`}>
-            <div className="wt-exercise-head">
-              <div>
-                <div className="wt-exercise-name">{ex.name}</div>
-                <div className="wt-exercise-meta">{ex.scheme} · {ex.rest}</div>
-                {lastWeights[ex.name] && (
-                  <div className="wt-exercise-last">Last: {lastWeights[ex.name].weight} lbs · {lastWeights[ex.name].date}</div>
-                )}
-              </div>
-              {ex.videos && (
-                <button className="wt-video-link" onClick={() => setModal({ videos: ex.videos, formNotes: ex.formNotes, name: ex.name })}>▶</button>
-              )}
-            </div>
-            <div className="wt-field-grid">
-              <div className="wt-field">
-                <label>Sets</label>
-                <input type="text" inputMode="numeric" placeholder={ex.scheme.split('×')[0].trim()} value={entry.sets || ''} onChange={e => updateField(ex.id, 'sets', e.target.value)} />
-              </div>
-              <div className="wt-field">
-                <label>Reps</label>
-                <input type="text" inputMode="numeric" placeholder="" value={entry.reps || ''} onChange={e => updateField(ex.id, 'reps', e.target.value)} />
-              </div>
-              <div className="wt-field">
-                <label>Weight</label>
-                <input type="text" inputMode="decimal" placeholder="lbs" value={entry.weight || ''} onChange={e => updateField(ex.id, 'weight', e.target.value)} />
-              </div>
-            </div>
-            <div className="wt-notes-row">
-              <div className="wt-field">
-                <label>Notes</label>
-                <input type="text" placeholder="" value={entry.notes || ''} onChange={e => updateField(ex.id, 'notes', e.target.value)} />
-              </div>
-              <button className={`wt-log-btn ${entry.saved ? 'saved' : ''}`} onClick={() => logExercise(ex)}>
-                {entry.saved ? '✓ Logged' : 'Log'}
+          <div className="wt-days">
+            {Object.entries(PLAN).map(([key, d]) => (
+              <button key={key} className={`wt-day-btn ${dayKey === key ? 'active' : ''}`} onClick={() => setDayKey(key)}>
+                <div className="wt-day-label">{d.label}</div>
+                <div className="wt-day-sub">{d.sub}</div>
               </button>
+            ))}
+          </div>
+
+          <div className="wt-bar-wrap">
+            <div className="wt-bar-track">
+              <div className="wt-bar-fill" style={{ width: `${(loggedCount / plan.exercises.length) * 100}%` }} />
             </div>
+            <div className="wt-bar-count">{loggedCount}/{plan.exercises.length} logged</div>
           </div>
-        );
-      })}
 
-      <Collapsible title="Finisher" open={false}>
-        <BulletList text={plan.finisher} />
-      </Collapsible>
+          <Collapsible title="Warm-up (7 min)" open={warmupOpen} onToggle={() => setWarmupOpen(!warmupOpen)}>
+            <BulletList text={plan.warmup} />
+          </Collapsible>
 
-      {modal && (
-        <div className="wt-modal-overlay" onClick={() => setModal(null)}>
-          <div className="wt-modal" onClick={e => e.stopPropagation()}>
-            <div className="wt-modal-handle" />
-            <div className="wt-modal-title">{modal.name}</div>
-            <VideoModal videos={modal.videos} formNotes={modal.formNotes} />
-            <button className="wt-modal-close" onClick={() => setModal(null)}>Close</button>
-          </div>
+          {plan.exercises.map(ex => {
+            const entry = logs[ex.id] || {};
+            return (
+              <div key={ex.id} className={`wt-exercise ${entry.saved ? 'saved' : ''}`}>
+                <div className="wt-exercise-head">
+                  <div>
+                    <div className="wt-exercise-name">{ex.name}</div>
+                    <div className="wt-exercise-meta">{ex.scheme} · {ex.rest}</div>
+                    {lastWeights[ex.name] && (
+                      <div className="wt-exercise-last">Last: {lastWeights[ex.name].weight} lbs · {lastWeights[ex.name].date}</div>
+                    )}
+                  </div>
+                  {ex.videos && (
+                    <button className="wt-video-link" onClick={() => setModal({ videos: ex.videos, formNotes: ex.formNotes, name: ex.name })}>▶</button>
+                  )}
+                </div>
+                <div className="wt-field-grid">
+                  <div className="wt-field">
+                    <label>Sets</label>
+                    <input type="text" inputMode="numeric" placeholder={ex.scheme.split('×')[0].trim()} value={entry.sets || ''} onChange={e => updateField(ex.id, 'sets', e.target.value)} />
+                  </div>
+                  <div className="wt-field">
+                    <label>Reps</label>
+                    <input type="text" inputMode="numeric" placeholder="" value={entry.reps || ''} onChange={e => updateField(ex.id, 'reps', e.target.value)} />
+                  </div>
+                  <div className="wt-field">
+                    <label>Weight</label>
+                    <input type="text" inputMode="decimal" placeholder="lbs" value={entry.weight || ''} onChange={e => updateField(ex.id, 'weight', e.target.value)} />
+                  </div>
+                </div>
+                <div className="wt-notes-row">
+                  <div className="wt-field">
+                    <label>Notes</label>
+                    <input type="text" placeholder="" value={entry.notes || ''} onChange={e => updateField(ex.id, 'notes', e.target.value)} />
+                  </div>
+                  <button className={`wt-log-btn ${entry.saved ? 'saved' : ''}`} onClick={() => logExercise(ex)}>
+                    {entry.saved ? '✓ Logged' : 'Log'}
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          <Collapsible title="Finisher" open={false}>
+            <BulletList text={plan.finisher} />
+          </Collapsible>
+
+          {modal && (
+            <div className="wt-modal-overlay" onClick={() => setModal(null)}>
+              <div className="wt-modal" onClick={e => e.stopPropagation()}>
+                <div className="wt-modal-handle" />
+                <div className="wt-modal-title">{modal.name}</div>
+                <VideoModal videos={modal.videos} formNotes={modal.formNotes} />
+                <button className="wt-modal-close" onClick={() => setModal(null)}>Close</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
-      <RestTimer key={`${timer.label}-${timer.seconds}`} seconds={timer.seconds} label={timer.label} />
+      <nav className="wt-nav">
+        <button className={`wt-nav-btn ${tab === 'workout' ? 'active' : ''}`} onClick={() => setTab('workout')}>
+          <span className="wt-nav-icon">🏋️</span>
+          Workout
+        </button>
+        <button className={`wt-nav-btn ${tab === 'progress' ? 'active' : ''}`} onClick={() => setTab('progress')}>
+          <span className="wt-nav-icon">📈</span>
+          Progress
+        </button>
+      </nav>
     </div>
   );
-}
 
 ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
