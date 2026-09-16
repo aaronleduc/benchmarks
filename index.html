@@ -28,10 +28,11 @@
   .tab-root { padding: calc(18px + env(safe-area-inset-top)) 16px calc(80px + env(safe-area-inset-bottom)); }
 
   /* Header */
-  .wt-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+  .wt-header { margin-bottom: 12px; }
+  .wt-header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .wt-title { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 26px; letter-spacing: 0.04em; text-transform: uppercase; margin: 0; color: var(--text); }
   .wt-title span { color: var(--accent); }
-  .wt-header-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+  .wt-header-bottom { display: flex; gap: 8px; align-items: center; }
   .wt-export-btn { background: none; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; padding: 6px 12px; cursor: pointer; }
   .wt-status-pill { font-size: 12px; color: var(--muted); border: 1px solid var(--line); border-radius: 20px; padding: 5px 10px; display: flex; align-items: center; gap: 5px; }
   .wt-status-pill.ready { border-color: rgba(52,211,153,0.4); color: var(--good); }
@@ -51,7 +52,6 @@
   .wt-day-btn.active { border-color: var(--accent); background: var(--accent-soft); }
   .wt-day-label { font-family: 'Oswald', sans-serif; font-weight: 600; font-size: 14px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
   .wt-day-btn.active .wt-day-label { color: var(--accent); }
-  .wt-day-sub { font-size: 11px; color: var(--muted); margin-top: 2px; opacity: 0.7; }
 
   /* Progress bar */
   .wt-bar-wrap { display: flex; align-items: center; gap: 8px; margin-bottom: 18px; }
@@ -390,8 +390,8 @@ function ExerciseCard({ ex, setRows, onUpdateRows, lastData, db }) {
       {rows.map((row, i) => (
         <div key={i} className="wt-set-row">
           <div className="wt-set-label">S{i+1}</div>
-          <input className={`wt-set-input${row.saved?' saved':''}`} type="text" inputMode="numeric" value={row.reps} onChange={e => updateRow(i,'reps',e.target.value)} placeholder={ex.repRange?.[0]||''}/>
-          <input className={`wt-set-input${row.saved?' saved':''}`} type="text" inputMode="decimal" value={row.weight} onChange={e => updateRow(i,'weight',e.target.value)} placeholder="lbs"/>
+          <input className={`wt-set-input${row.saved?' saved':''}`} type="text" inputMode="numeric" value={row.reps} onChange={e => updateRow(i,'reps',e.target.value)} />
+          <input className={`wt-set-input${row.saved?' saved':''}`} type="text" inputMode="decimal" value={row.weight} onChange={e => updateRow(i,'weight',e.target.value)} />
           <div style={{display:'flex',gap:'4px',alignItems:'center'}}>
             <button className={`wt-set-log-btn${row.saved?' saved':''}`} onClick={() => logRow(i)}>{row.saved?'✓':'Log'}</button>
             <button className="wt-set-remove" onClick={() => removeRow(i)} title="Remove set">×</button>
@@ -649,7 +649,7 @@ function App() {
   };
 
   const plan = PLAN[dayKey];
-  const totalSets = plan.exercises.reduce((acc, ex) => acc + (setRows[ex.id]||[]).length, 0);
+  const totalSets = plan.exercises.reduce((acc, ex) => acc + Math.max((setRows[ex.id]||[]).length, ex.sets), 0);
   const savedSets = plan.exercises.reduce((acc, ex) => acc + (setRows[ex.id]||[]).filter(r=>r.saved).length, 0);
 
   return (
@@ -659,8 +659,10 @@ function App() {
       ) : (
         <div className="tab-root">
           <div className="wt-header">
-            <h1 className="wt-title">Bench<span>marks</span></h1>
-            <div className="wt-header-right">
+            <div className="wt-header-top">
+              <h1 className="wt-title">Bench<span>marks</span></h1>
+            </div>
+            <div className="wt-header-bottom">
               <button className="wt-export-btn" onClick={exportCSV}>Export CSV</button>
               <div className={`wt-status-pill${db?' ready':''}`}>
                 <span className="dot"/>
@@ -677,7 +679,6 @@ function App() {
             {WORKOUT_ORDER.map(key => (
               <button key={key} className={`wt-day-btn${dayKey===key?' active':''}`} onClick={()=>setDayKey(key)}>
                 <div className="wt-day-label">Workout {key}</div>
-                <div className="wt-day-sub">{PLAN[key].sub}</div>
               </button>
             ))}
           </div>
